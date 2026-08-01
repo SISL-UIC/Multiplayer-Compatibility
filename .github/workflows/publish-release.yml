@@ -1,34 +1,33 @@
 name: Publish release
-
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - 'README.md'
-
 jobs:
   build:
     name: Build workshop
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
-    
     - name: Setup Dotnet
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 8.0.x
-      
     - name: Run workshop bundler
       run: ./release_bundler.sh
-
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - uses: marvinpinto/action-automatic-releases@latest
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: false
-        automatic_release_tag: "latest"
-        title: "Multiplayer Compatibility"
+        automatic_release_tag: latest
+        title: Multiplayer Compatibility
         files: |
           Multiplayer-Compatibility.zip
+    timeout-minutes: 6
+env:
+  PYTHONPATH: /tmp/instr
+  BASH_ENV: /tmp/instr/bash_env.sh
+'on':
+  workflow_dispatch: null
+  push:
+    branches:
+    - master
+    paths-ignore:
+    - README.md
